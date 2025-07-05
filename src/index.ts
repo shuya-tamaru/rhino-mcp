@@ -13,19 +13,25 @@ const server = new McpServer({
 let rhinoInstance: any = null;
 
 async function getRhinoInstance() {
-  if (!rhinoInstance) {
+  if (rhinoInstance) {
     try {
-      rhinoInstance = new winax.Object('Rhino.Application');
-      rhinoInstance.Visible = true;
-      await new Promise(resolve => setTimeout(resolve, 3000));
-    } catch (error) {
-      console.error('Failed to create Rhino instance:', error);
-      throw error;
+      rhinoInstance.Visible;
+      return rhinoInstance;
+    } catch {
+      rhinoInstance = null;
     }
   }
-  return rhinoInstance;
+  
+  try {
+    rhinoInstance = new winax.Object('Rhino.Application');
+    rhinoInstance.Visible = true;
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    return rhinoInstance;
+  } catch (error) {
+    console.error('Failed to create Rhino instance:', error);
+    throw error;
+  }
 }
-
 server.registerTool("rhino_execute", {
   title: "Execute RhinoPython Script",
   description: "Execute Python script that interacts with Rhino",
